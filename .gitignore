@@ -1,0 +1,11 @@
+zone*
+mw3
+raw
+*.log
+*.tmp
+node_modules
+package-lock.json
+translation
+Linker
+Unlinker
+ImageConverter
