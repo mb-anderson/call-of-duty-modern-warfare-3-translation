@@ -122,7 +122,7 @@ Edit the JSON files manually or use any translation tool of your choice.
 
 ### 5. Generate Patch Files
 
-Convert translated JSON back to STR format with chunking (to avoid the 10,000 localized asset limit):
+Convert translated JSON back to STR format with ACT{1,2,3} splitted  (to avoid the 10,000 localized asset limit):
 
 ```bash
 python json_to_patch_str.py
@@ -130,8 +130,8 @@ python json_to_patch_str.py
 
 This script will:
 
-- Generate chunked `patch.str`, `patch1.str`, `patch2.str`, etc.
-- Copy STR files to appropriate `zone_raw/patch[index]` directories
+- Generate ACT splitted `patch_ACT1.str`, `patch_ACT2.str`, `patch_ACT3.str`, etc.
+- Copy STR files to appropriate `zone_raw/patch_ACT[index]` directories
 - Automatically run `linker.sh` to build fastfiles
 - Copy generated `.ff` files to game directory
 
@@ -171,18 +171,18 @@ Then copy the generated `.ff` files from `zone_out/` to your game's `zone/englis
 
 5. **Linking Phase**
    - `linker.sh`: Rebuilds fastfiles from modified sources
-   - Creates patch chain: patch → patch1 → patch2 → patch3 → patch4
-   - Each patch includes the next in the chain
+   - Creates ACT based fast files
+   - Each patch includes MENU + Specified Maps Translation
 
 ### Important Notes
 
 #### Asset Limit Handling
 
-MW3 has a hardcoded limit of 10,000 localized assets per fastfile. This project uses a chaining strategy:
+MW3 has a hardcoded limit of 10,000 localized assets per fastfile. This project uses ACT based translation strategy:
 
 - Strings are split into chunks of 5,000 entries each
-- Multiple patch files are created (`patch.str`, `patch1.str`, etc.)
-- Patches form an include chain in `zone_raw/` definitions
+- Multiple patch files are created (`patch_ACT1.str`, `patch_ACT2.str`, `patch_ACT3.str`.)
+- Patches form an includes in `zone_raw/` definitions
 - This allows unlimited translations while respecting engine limits
 
 #### Character Mapping
@@ -238,30 +238,20 @@ This means too many strings are in a single patch file. Reduce `CHUNK_SIZE` in `
 
 ### Missing Translations in Game
 
-Ensure patch files are properly chained in `zone_raw/` definitions:
+Ensure patch files are properly defined in `zone_raw/` definitions:
 
-- `patch.zone` should include `patch1`
-- `patch1.zone` should include `patch2`
+- `patch.zone` should be exluded originally
+- `patch_ACT{1,2,3}` folder and zone definitions should be in zone_raw/patch_ACT{1,2,3}
 - And so on...
 
 Your patch[*].zone files should look like:
-/patch/english/localizedstrings/patch.str:
+/patch_ACT1/english/localizedstrings/patch_ACT1.str:
 ```
 >game,IW5
 
-localize,patch
-localize,patch1
+localize,patch_ACT1
 ...other...
 [DO NOT DELETE OTHER TEXTS]
-EOF
-```
-zone_raw/patch/english/localizedstrings/patch[1-4].str:
-```
->game,IW5
-
-localize,patch1
-localize,patch2
-[DELETE OTHER TEXTS]
 EOF
 ```
 
@@ -270,14 +260,12 @@ oat-linux/
     └──zone_raw/
         │    └──patch
         │           └──english/localizedstrings/patch.str
-        │    └──patch1
-        │           └──english/localizedstrings/patch1.str
-        │    └──patch2
-        │           └──english/localizedstrings/patch2.str
-        │    └──patch3
-        │           └──english/localizedstrings/patch3.str
-        │    └──patch4
-        │           └──english/localizedstrings/patch4.str
+        │    └──patch_ACT1
+        │           └──english/localizedstrings/patch_ACT1.str
+        │    └──patch_ACT2
+        │           └──english/localizedstrings/patch_ACT2.str
+        │    └──patch_ACT3
+        │           └──english/localizedstrings/patch_ACT3.str
 ```
 
 ### Linker Errors
@@ -304,6 +292,8 @@ After running the complete pipeline, you'll have:
 - `all_strings.json` - All strings in JSON format
 - `translation/patch*.str` - Translated strings in STR format
 - `zone_out/patch*.ff` - Compiled fastfiles ready for game to copy and paste MW3/zone/english
+- Rename `patch_ACT{1,2,3}.ff` to `patch.ff` pasted files in your game directory. The index is what act you are playing.
+- Sorry, but this is the only solution that I found, otherwise you get an error: `exceeded limit of 10000 localize assets`
 
 ## 🤝 Contributing
 
