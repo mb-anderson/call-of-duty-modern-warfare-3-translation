@@ -22,9 +22,10 @@ LANGUAGE_MAP_TO_LATIN = str.maketrans({
 
 GAME_DIRECTORY = "/media/anderson/VAIO/Call of Duty - Modern Warfare 3"
 TRANSLATION_PATH = "translation"
-EXPORTED_JSON_PATH = f"{TRANSLATION_PATH}/exported/json"
-TRANSLATED_JSON = f"{EXPORTED_JSON_PATH}/translated.json.tr.json"
-TRANSLATED_STR_PATH = f"{TRANSLATION_PATH}/translated/str"
+TRANSLATED_PATH = f"{TRANSLATION_PATH}/translated"
+TRANSLATED_JSON_PATH = f"{TRANSLATED_PATH}/json"
+TRANSLATED_JSON = f"{TRANSLATED_JSON_PATH}/translated.json.tr.json"
+TRANSLATED_STR_PATH = f"{TRANSLATED_PATH}/str"
 CHUNK_SIZE = 5000   # Every N entries, create a new STR file
 
 os.makedirs(TRANSLATED_STR_PATH, exist_ok=True)
